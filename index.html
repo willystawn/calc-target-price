@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Target TP Crypto</title>
+    <style>
+        /* CSS untuk tampilan */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .calculator-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #e9f5ff;
+            border: 1px solid #b3d7ff;
+            border-radius: 8px;
+        }
+
+        #target-tp {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator-container">
+        <h2>Kalkulator Target TP Crypto (1:1.5)</h2>
+        <div class="input-group">
+            <label for="entry-price">Harga Masuk (Entry Price)</label>
+            <input type="number" id="entry-price" placeholder="Contoh: 0.123456" step="any">
+        </div>
+        <div class="input-group">
+            <label for="sl-price">Harga Stop Loss (SL Price)</label>
+            <input type="number" id="sl-price" placeholder="Contoh: 0.123000" step="any">
+        </div>
+        <button onclick="calculateTP()">Hitung TP</button>
+        <div class="result" style="display: none;" id="result-container">
+            <p>Target Take Profit (TP) Anda:</p>
+            <p id="target-tp">-</p>
+        </div>
+    </div>
+
+    <script>
+        // --- Bagian Baru untuk fungsi "Enter" ---
+        
+        // Ambil elemen input
+        const entryPriceInput = document.getElementById('entry-price');
+        const slPriceInput = document.getElementById('sl-price');
+
+        // Fungsi untuk menangani penekanan tombol Enter
+        const handleEnterKey = (event) => {
+            // Cek jika tombol yang ditekan adalah "Enter"
+            if (event.key === 'Enter') {
+                // Jalankan fungsi perhitungan
+                calculateTP();
+            }
+        };
+
+        // Tambahkan event listener ke kedua input field
+        entryPriceInput.addEventListener('keyup', handleEnterKey);
+        slPriceInput.addEventListener('keyup', handleEnterKey);
+
+
+        // --- Fungsi Perhitungan Utama (tetap sama) ---
+        function calculateTP() {
+            const entryPrice = parseFloat(document.getElementById('entry-price').value);
+            const slPrice = parseFloat(document.getElementById('sl-price').value);
+
+            if (isNaN(entryPrice) || isNaN(slPrice)) {
+                alert("Mohon masukkan harga yang valid.");
+                return;
+            }
+
+            if (entryPrice <= slPrice) {
+                alert("Harga masuk harus lebih tinggi dari harga stop loss untuk posisi beli (long).");
+                return;
+            }
+
+            // Menghitung risiko
+            const risk = entryPrice - slPrice;
+
+            // Menghitung imbalan (1.5x dari risiko)
+            const reward = risk * 1.5;
+
+            // Menghitung target TP
+            const tpTarget = entryPrice + reward;
+
+            // Menampilkan hasil dengan 6 angka desimal
+            document.getElementById('target-tp').innerText = tpTarget.toFixed(6);
+            document.getElementById('result-container').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
