@@ -89,6 +89,7 @@
             font-size: 20px;
             font-weight: 600;
             color: #0056b3;
+            word-wrap: break-word;
         }
     </style>
 </head>
@@ -104,6 +105,10 @@
             <label for="sl-price">Harga Stop Loss (SL Price)</label>
             <input type="number" id="sl-price" placeholder="Contoh: 0.123000" step="any">
         </div>
+        <div class="input-group">
+            <label for="decimal-places">Jumlah Angka di Belakang Koma</label>
+            <input type="number" id="decimal-places" value="6" min="0">
+        </div>
         <button onclick="calculateTP()">Hitung TP</button>
         <div class="result" style="display: none;" id="result-container">
             <p>Target Take Profit (TP) Anda:</p>
@@ -112,33 +117,36 @@
     </div>
 
     <script>
-        // --- Bagian Baru untuk fungsi "Enter" ---
-        
         // Ambil elemen input
         const entryPriceInput = document.getElementById('entry-price');
         const slPriceInput = document.getElementById('sl-price');
+        const decimalInput = document.getElementById('decimal-places');
 
         // Fungsi untuk menangani penekanan tombol Enter
         const handleEnterKey = (event) => {
-            // Cek jika tombol yang ditekan adalah "Enter"
             if (event.key === 'Enter') {
-                // Jalankan fungsi perhitungan
                 calculateTP();
             }
         };
 
-        // Tambahkan event listener ke kedua input field
+        // Tambahkan event listener ke semua input field
         entryPriceInput.addEventListener('keyup', handleEnterKey);
         slPriceInput.addEventListener('keyup', handleEnterKey);
+        decimalInput.addEventListener('keyup', handleEnterKey);
 
-
-        // --- Fungsi Perhitungan Utama (tetap sama) ---
+        // Fungsi Perhitungan Utama
         function calculateTP() {
             const entryPrice = parseFloat(document.getElementById('entry-price').value);
             const slPrice = parseFloat(document.getElementById('sl-price').value);
+            const decimalPlaces = parseInt(document.getElementById('decimal-places').value);
 
             if (isNaN(entryPrice) || isNaN(slPrice)) {
                 alert("Mohon masukkan harga yang valid.");
+                return;
+            }
+            
+            if (isNaN(decimalPlaces) || decimalPlaces < 0) {
+                alert("Mohon masukkan jumlah desimal yang valid (angka positif).");
                 return;
             }
 
@@ -156,8 +164,8 @@
             // Menghitung target TP
             const tpTarget = entryPrice + reward;
 
-            // Menampilkan hasil dengan 6 angka desimal
-            document.getElementById('target-tp').innerText = tpTarget.toFixed(6);
+            // Menampilkan hasil dengan jumlah desimal yang ditentukan pengguna
+            document.getElementById('target-tp').innerText = tpTarget.toFixed(decimalPlaces);
             document.getElementById('result-container').style.display = 'block';
         }
     </script>
