@@ -59,6 +59,12 @@
             outline: none;
             border-color: #007bff;
         }
+        
+        .buttons-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
 
         button {
             background-color: #007bff;
@@ -75,6 +81,14 @@
 
         button:hover {
             background-color: #0056b3;
+        }
+
+        #copy-button {
+            background-color: #28a745;
+        }
+
+        #copy-button:hover {
+            background-color: #218838;
         }
 
         .result {
@@ -105,11 +119,10 @@
             <label for="sl-price">Harga Stop Loss (SL Price)</label>
             <input type="number" id="sl-price" placeholder="Contoh: 0.123000" step="any">
         </div>
-        <div class="input-group">
-            <label for="decimal-places">Jumlah Angka di Belakang Koma</label>
-            <input type="number" id="decimal-places" value="6" min="0">
+        <div class="buttons-container">
+            <button onclick="calculateTP()">Hitung TP</button>
+            <button id="copy-button" onclick="copyResult()" style="display: none;">Salin Hasil</button>
         </div>
-        <button onclick="calculateTP()">Hitung TP</button>
         <div class="result" style="display: none;" id="result-container">
             <p>Target Take Profit (TP) Anda:</p>
             <p id="target-tp">-</p>
@@ -120,7 +133,6 @@
         // Ambil elemen input
         const entryPriceInput = document.getElementById('entry-price');
         const slPriceInput = document.getElementById('sl-price');
-        const decimalInput = document.getElementById('decimal-places');
 
         // Fungsi untuk menangani penekanan tombol Enter
         const handleEnterKey = (event) => {
@@ -132,21 +144,30 @@
         // Tambahkan event listener ke semua input field
         entryPriceInput.addEventListener('keyup', handleEnterKey);
         slPriceInput.addEventListener('keyup', handleEnterKey);
-        decimalInput.addEventListener('keyup', handleEnterKey);
+
+        // Fungsi untuk mendapatkan jumlah angka di belakang koma
+        function getDecimalPlaces(value) {
+            if (Math.floor(value) === value) return 0;
+            const valueStr = value.toString();
+            const decimalPart = valueStr.split('.')[1];
+            return decimalPart ? decimalPart.length : 0;
+        }
 
         // Fungsi Perhitungan Utama
         function calculateTP() {
-            const entryPrice = parseFloat(document.getElementById('entry-price').value);
-            const slPrice = parseFloat(document.getElementById('sl-price').value);
-            const decimalPlaces = parseInt(document.getElementById('decimal-places').value);
+            const entryPriceStr = document.getElementById('entry-price').value;
+            const slPriceStr = document.getElementById('sl-price').value;
+
+            if (!entryPriceStr || !slPriceStr) {
+                alert("Mohon masukkan harga masuk dan harga stop loss.");
+                return;
+            }
+
+            const entryPrice = parseFloat(entryPriceStr);
+            const slPrice = parseFloat(slPriceStr);
 
             if (isNaN(entryPrice) || isNaN(slPrice)) {
                 alert("Mohon masukkan harga yang valid.");
-                return;
-            }
-            
-            if (isNaN(decimalPlaces) || decimalPlaces < 0) {
-                alert("Mohon masukkan jumlah desimal yang valid (angka positif).");
                 return;
             }
 
@@ -154,6 +175,11 @@
                 alert("Harga masuk harus lebih tinggi dari harga stop loss untuk posisi beli (long).");
                 return;
             }
+
+            // Menentukan jumlah desimal berdasarkan input
+            const entryDecimalPlaces = getDecimalPlaces(entryPriceStr);
+            const slDecimalPlaces = getDecimalPlaces(slPriceStr);
+            const decimalPlaces = Math.max(entryDecimalPlaces, slDecimalPlaces);
 
             // Menghitung risiko
             const risk = entryPrice - slPrice;
@@ -164,9 +190,30 @@
             // Menghitung target TP
             const tpTarget = entryPrice + reward;
 
-            // Menampilkan hasil dengan jumlah desimal yang ditentukan pengguna
+            // Menampilkan hasil dengan jumlah desimal yang disesuaikan
             document.getElementById('target-tp').innerText = tpTarget.toFixed(decimalPlaces);
             document.getElementById('result-container').style.display = 'block';
+            document.getElementById('copy-button').style.display = 'block'; // Tampilkan tombol salin
+        }
+
+        // Fungsi untuk menyalin hasil
+        function copyResult() {
+            const entryPrice = document.getElementById('entry-price').value;
+            const slPrice = document.getElementById('sl-price').value;
+            const tpPrice = document.getElementById('target-tp').innerText;
+
+            const resultText = `Entry: ${entryPrice}\nSL: ${slPrice}\nTP: ${tpPrice}`;
+
+            navigator.clipboard.writeText(resultText).then(() => {
+                const copyButton = document.getElementById('copy-button');
+                copyButton.innerText = 'Berhasil Disalin!';
+                setTimeout(() => {
+                    copyButton.innerText = 'Salin Hasil';
+                }, 2000); // Kembalikan teks tombol setelah 2 detik
+            }).catch(err => {
+                console.error('Gagal menyalin teks: ', err);
+                alert('Gagal menyalin hasil.');
+            });
         }
     </script>
 
