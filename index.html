@@ -1,221 +1,209 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Target TP Crypto</title>
+    <title>Trading Assistant: Kalkulator & Checklist</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS untuk tampilan */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            background-color: #f8fafc; /* Latar belakang lebih cerah: gray-50 */
         }
-
-        .calculator-container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
+        /* Menghilangkan panah di input number */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+          -webkit-appearance: none; 
+          margin: 0; 
         }
-
-        h2 {
-            color: #333;
-            margin-bottom: 25px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 600;
-        }
-
-        input[type="number"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        input[type="number"]:focus {
-            outline: none;
-            border-color: #007bff;
-        }
-        
-        .buttons-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            width: 100%;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        #copy-button {
-            background-color: #28a745;
-        }
-
-        #copy-button:hover {
-            background-color: #218838;
-        }
-
-        .result {
-            margin-top: 25px;
-            padding: 15px;
-            background-color: #e9f5ff;
-            border: 1px solid #b3d7ff;
-            border-radius: 8px;
-        }
-
-        #target-tp {
-            font-size: 20px;
-            font-weight: 600;
-            color: #0056b3;
-            word-wrap: break-word;
+        input[type=number] {
+          -moz-appearance: textfield;
         }
     </style>
 </head>
-<body>
+<body class="text-slate-800">
 
-    <div class="calculator-container">
-        <h2>Kalkulator Target TP Crypto (1:1.5)</h2>
-        <div class="input-group">
-            <label for="entry-price">Harga Masuk (Entry Price)</label>
-            <input type="number" id="entry-price" placeholder="Contoh: 0.123456" step="any">
-        </div>
-        <div class="input-group">
-            <label for="sl-price">Harga Stop Loss (SL Price)</label>
-            <input type="number" id="sl-price" placeholder="Contoh: 0.123000" step="any">
-        </div>
-        <div class="buttons-container">
-            <button onclick="calculateTP()">Hitung TP</button>
-            <button id="copy-button" onclick="copyResult()" style="display: none;">Salin Hasil</button>
-        </div>
-        <div class="result" style="display: none;" id="result-container">
-            <p>Target Take Profit (TP) Anda:</p>
-            <p id="target-tp">-</p>
+    <div class="w-full max-w-6xl mx-auto p-4 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl lg:text-4xl font-bold text-slate-900">Trading Assistant</h1>
+            <p class="text-slate-500 mt-1">Alat bantu untuk perencanaan trading Anda.</p>
+        </header>
+
+        <!-- Kontainer Utama untuk Layout Flexbox -->
+        <div class="lg:flex lg:gap-8 lg:items-start">
+
+            <!-- === Kalkulator (Tampil pertama di mobile, pindah ke kanan di desktop) === -->
+            <div class="w-full lg:w-1/2 lg:order-2 lg:sticky lg:top-8">
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-slate-200">
+                    <h2 class="text-2xl font-bold text-slate-900 text-center mb-6">Kalkulator Real-time (1:1.5)</h2>
+                    <div class="space-y-5">
+                        <div>
+                            <label for="entry-price" class="block text-sm font-medium text-slate-600 mb-1.5">Harga Masuk (Entry)</label>
+                            <input type="number" id="entry-price" placeholder="Masukkan harga masuk..." step="any" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 text-lg">
+                        </div>
+                        <div>
+                            <label for="sl-price" class="block text-sm font-medium text-slate-600 mb-1.5">Harga Stop Loss (SL)</label>
+                            <input type="number" id="sl-price" placeholder="Masukkan harga stop loss..." step="any" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 text-lg">
+                        </div>
+                    </div>
+                    
+                    <!-- Hasil Kalkulasi -->
+                    <div id="result-container" class="mt-8 pt-6 border-t border-slate-200">
+                        <div class="grid grid-cols-2 gap-4 text-center">
+                            <div>
+                                <p class="text-sm text-slate-500">Risiko (Risk)</p>
+                                <p id="risk-value" class="font-bold text-lg text-red-600 break-words">-</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500">Keuntungan (Reward)</p>
+                                <p id="reward-value" class="font-bold text-lg text-green-600 break-words">-</p>
+                            </div>
+                        </div>
+                        <div class="mt-6 p-5 bg-indigo-50 border border-indigo-200 rounded-xl text-center">
+                            <p class="text-sm font-medium text-indigo-800">Target Take Profit (TP)</p>
+                            <p id="target-tp" class="text-3xl font-bold text-indigo-900 break-words">-</p>
+                        </div>
+                        <p id="error-message" class="text-center text-red-600 text-sm mt-3 h-5"></p>
+                    </div>
+
+                    <div class="mt-4">
+                         <button id="copy-button" onclick="copyResult()" class="w-full bg-indigo-600 text-white font-semibold py-3.5 rounded-xl hover:bg-indigo-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center gap-2 disabled:bg-slate-300 disabled:cursor-not-allowed" disabled>
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" /><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2H6zM8 7a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" /></svg>
+                             <span>Salin Hasil</span>
+                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === Checklist & Peringatan (Tampil kedua di mobile, pindah ke kiri di desktop) === -->
+            <div class="w-full lg:w-1/2 space-y-6 mt-6 lg:mt-0 lg:order-1">
+                <!-- Checklist Card -->
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-slate-200">
+                    <h2 class="text-xl font-bold text-slate-900 text-center mb-6">Checklist Sebelum Entri</h2>
+                    <ul class="space-y-4">
+                        <!-- Items Checklist -->
+                        <li class="flex items-start"><input type="checkbox" id="check1" class="h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0"><label for="check1" class="ml-3 text-sm text-slate-700"><strong>Volume di atas $10 Juta?</strong><br>Hindari koin bervolume rendah untuk mencegah kesulitan likuidasi.</label></li>
+                        <li class="flex items-start"><input type="checkbox" id="check2" class="h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0"><label for="check2" class="ml-3 text-sm text-slate-700"><strong>Candle <em>Fully Outside</em> EMA 25?</strong><br>Pastikan candle setup sepenuhnya di luar EMA 25, tanpa <em>shadow/wick</em> yang menyentuh garis EMA sejak dari bawah.</label></li>
+                        <li class="flex items-start"><input type="checkbox" id="check3" class="h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0"><label for="check3" class="ml-3 text-sm text-slate-700"><strong>Tidak Ada <em>Lower Low</em> Menuju Entri?</strong><br>Hindari setup dengan <em>Lower Low</em> yang mengarah ke titik entri (jika <em>LL</em> di bawah EMA 25, aman).</label></li>
+                        <li class="flex items-start"><input type="checkbox" id="check4" class="h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0"><label for="check4" class="ml-3 text-sm text-slate-700"><strong>Open Candle Tidak Menempel EMA 50?</strong><br>Jika menempel, harga berpotensi turun dulu. Sebaiknya <em>skip</em> atau bisa entri di bawah.</label></li>
+                        <li class="flex items-start"><input type="checkbox" id="check5" class="h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0"><label for="check5" class="ml-3 text-sm text-slate-700"><strong>Skenario Khusus: Entri di <em>Pullback</em>?</strong><br>Jika candle sangat panjang dan baru menembus <em>resistance</em>, pertimbangkan entri saat harga terkoreksi (<em>pullback</em>).</label></li>
+                    </ul>
+                </div>
+                <!-- Peringatan Card -->
+                <div class="bg-rose-50 border-l-4 border-rose-500 p-6 rounded-r-lg shadow-md">
+                    <h2 class="text-xl font-bold text-rose-900 mb-4">Peringatan & Aturan Keluar</h2>
+                    <ul class="space-y-3 text-rose-800 text-sm">
+                        <li><strong>Aturan Keluar Utama:</strong> Posisi hanya ditutup jika ada candle bearish yang bodynya menembus dan ditutup di bawah EMA 25 (close di entri). Selama hal ini belum terjadi, posisi masih aman.</li>
+                        <li><strong>Disiplin Stop Loss (SL):</strong> Jika harga menyentuh level SL yang telah ditentukan, segera keluar. Jangan menunggu dengan harapan harga akan kembali naik.</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Ambil elemen input
         const entryPriceInput = document.getElementById('entry-price');
         const slPriceInput = document.getElementById('sl-price');
+        const copyButton = document.getElementById('copy-button');
+        const targetTpText = document.getElementById('target-tp');
+        const riskValueText = document.getElementById('risk-value');
+        const rewardValueText = document.getElementById('reward-value');
+        const errorMessageText = document.getElementById('error-message');
 
-        // Fungsi untuk menangani penekanan tombol Enter
-        const handleEnterKey = (event) => {
-            if (event.key === 'Enter') {
-                calculateTP();
-            }
+        // Mencegah perubahan angka saat scroll di input number
+        [entryPriceInput, slPriceInput].forEach(input => {
+            input.addEventListener('wheel', (event) => {
+                event.preventDefault();
+                event.target.blur();
+            });
+        });
+
+        // Fungsi untuk mereset tampilan hasil
+        const resetDisplay = (message = '') => {
+            targetTpText.innerText = '-';
+            riskValueText.innerText = '-';
+            rewardValueText.innerText = '-';
+            errorMessageText.innerText = message;
+            copyButton.disabled = true;
         };
 
-        // Tambahkan event listener ke semua input field
-        entryPriceInput.addEventListener('keyup', handleEnterKey);
-        slPriceInput.addEventListener('keyup', handleEnterKey);
-
-        // Fungsi untuk mendapatkan jumlah angka di belakang koma
-        function getDecimalPlaces(value) {
-            if (Math.floor(value) === value) return 0;
-            const valueStr = value.toString();
-            const decimalPart = valueStr.split('.')[1];
-            return decimalPart ? decimalPart.length : 0;
-        }
-
-        // Fungsi Perhitungan Utama
-        function calculateTP() {
-            const entryPriceStr = document.getElementById('entry-price').value;
-            const slPriceStr = document.getElementById('sl-price').value;
+        // Fungsi utama untuk kalkulasi real-time
+        const calculateTP = () => {
+            const entryPriceStr = entryPriceInput.value;
+            const slPriceStr = slPriceInput.value;
 
             if (!entryPriceStr || !slPriceStr) {
-                alert("Mohon masukkan harga masuk dan harga stop loss.");
+                resetDisplay();
                 return;
             }
 
             const entryPrice = parseFloat(entryPriceStr);
             const slPrice = parseFloat(slPriceStr);
 
-            if (isNaN(entryPrice) || isNaN(slPrice)) {
-                alert("Mohon masukkan harga yang valid.");
+            if (isNaN(entryPrice) || isNaN(slPrice) || entryPrice === 0) { // Tambah cek entryPrice tidak nol
+                resetDisplay();
                 return;
             }
 
             if (entryPrice <= slPrice) {
-                alert("Harga masuk harus lebih tinggi dari harga stop loss untuk posisi beli (long).");
+                resetDisplay("Harga entry harus lebih tinggi dari SL.");
                 return;
             }
+            
+            errorMessageText.innerText = '';
+            copyButton.disabled = false;
 
-            // Menentukan jumlah desimal berdasarkan input
-            const entryDecimalPlaces = getDecimalPlaces(entryPriceStr);
-            const slDecimalPlaces = getDecimalPlaces(slPriceStr);
+            const entryDecimalPlaces = (entryPriceStr.split('.')[1] || '').length;
+            const slDecimalPlaces = (slPriceStr.split('.')[1] || '').length;
             const decimalPlaces = Math.max(entryDecimalPlaces, slDecimalPlaces);
 
-            // Menghitung risiko
-            const risk = entryPrice - slPrice;
+            // Kalkulasi nilai absolut
+            const riskAbsolute = entryPrice - slPrice;
+            const rewardAbsolute = riskAbsolute * 1.5;
+            const tpTarget = entryPrice + rewardAbsolute;
 
-            // Menghitung imbalan (1.5x dari risiko)
-            const reward = risk * 1.5;
+            // ========================================================================
+            // === PERUBAHAN: Menghitung dan menampilkan Risk/Reward dalam persentase ===
+            // ========================================================================
+            const riskPercentage = (riskAbsolute / entryPrice) * 100;
+            const rewardPercentage = (rewardAbsolute / entryPrice) * 100;
 
-            // Menghitung target TP
-            const tpTarget = entryPrice + reward;
-
-            // Menampilkan hasil dengan jumlah desimal yang disesuaikan
-            document.getElementById('target-tp').innerText = tpTarget.toFixed(decimalPlaces);
-            document.getElementById('result-container').style.display = 'block';
-            document.getElementById('copy-button').style.display = 'block'; // Tampilkan tombol salin
-        }
+            // Update UI dengan hasil persentase dan absolut
+            riskValueText.innerText = `-${riskPercentage.toFixed(2)}%`; // Tampilkan sebagai persentase
+            rewardValueText.innerText = `+${rewardPercentage.toFixed(2)}%`; // Tampilkan sebagai persentase
+            targetTpText.innerText = tpTarget.toFixed(decimalPlaces); // Tetap nilai absolut
+        };
+        
+        // Pasang event listener 'input' untuk kalkulasi otomatis
+        entryPriceInput.addEventListener('input', calculateTP);
+        slPriceInput.addEventListener('input', calculateTP);
 
         // Fungsi untuk menyalin hasil
         function copyResult() {
-            const entryPrice = document.getElementById('entry-price').value;
-            const slPrice = document.getElementById('sl-price').value;
-            const tpPrice = document.getElementById('target-tp').innerText;
+            const entryPrice = entryPriceInput.value;
+            const slPrice = slPriceInput.value;
+            const tpPrice = targetTpText.innerText;
 
             const resultText = `Entry: ${entryPrice}\nSL: ${slPrice}\nTP: ${tpPrice}`;
 
             navigator.clipboard.writeText(resultText).then(() => {
-                const copyButton = document.getElementById('copy-button');
-                copyButton.innerText = 'Berhasil Disalin!';
+                const originalText = copyButton.innerHTML;
+                copyButton.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    <span>Berhasil Disalin!</span>`;
                 setTimeout(() => {
-                    copyButton.innerText = 'Salin Hasil';
-                }, 2000); // Kembalikan teks tombol setelah 2 detik
+                    copyButton.innerHTML = originalText;
+                }, 2000);
             }).catch(err => {
                 console.error('Gagal menyalin teks: ', err);
                 alert('Gagal menyalin hasil.');
             });
         }
     </script>
-
 </body>
 </html>
