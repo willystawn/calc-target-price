@@ -14,9 +14,8 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f8fafc; /* Latar belakang lebih cerah: gray-50 */
+            background-color: #f8fafc;
         }
-        /* Menghilangkan panah di input number */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
           -webkit-appearance: none; 
@@ -25,13 +24,18 @@
         input[type=number] {
           -moz-appearance: textfield;
         }
+        /* Style untuk label dari checkbox yang dicentang */
+        .checklist-item:checked + label {
+            text-decoration: line-through;
+            color: #64748b; /* slate-500 */
+        }
     </style>
 </head>
 <body class="text-slate-800">
 
     <div class="w-full max-w-6xl mx-auto p-4 lg:p-8">
         <header class="text-center mb-8">
-            <h1 class="text-3xl lg:text-4xl font-bold text-slate-900">Trading Assistant</h1>
+            <h1 class="text-3xl lg:text-4xl font-bold text-slate-900">Trade Assistant</h1>
         </header>
 
         <!-- Kontainer Utama untuk Layout Flexbox -->
@@ -39,20 +43,24 @@
 
             <!-- === Kalkulator (Tampil pertama di mobile, pindah ke kanan di desktop) === -->
             <div class="w-full lg:w-1/2 lg:order-2 lg:sticky lg:top-8">
-                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-slate-200">
+                <div class="relative bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-slate-200">
+                    
+                    <div id="calculator-overlay" class="absolute inset-0 bg-white/70 backdrop-blur-sm z-10 flex items-center justify-center rounded-2xl">
+                        <p class="text-center font-semibold text-slate-600 p-4">Lengkapi semua checklist<br>untuk mengaktifkan kalkulator.</p>
+                    </div>
+
                     <h2 class="text-2xl font-bold text-slate-900 text-center mb-6">Kalkulator (1:1.5)</h2>
                     <div class="space-y-5">
                         <div>
                             <label for="entry-price" class="block text-sm font-medium text-slate-600 mb-1.5">Harga Masuk (Entry)</label>
-                            <input type="number" id="entry-price" placeholder="Masukkan harga masuk..." step="any" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 text-lg">
+                            <input type="number" id="entry-price" placeholder="Terkunci..." step="any" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 text-lg disabled:bg-slate-100" disabled>
                         </div>
                         <div>
                             <label for="sl-price" class="block text-sm font-medium text-slate-600 mb-1.5">Harga Stop Loss (SL)</label>
-                            <input type="number" id="sl-price" placeholder="Masukkan harga stop loss..." step="any" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 text-lg">
+                            <input type="number" id="sl-price" placeholder="Terkunci..." step="any" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 text-lg disabled:bg-slate-100" disabled>
                         </div>
                     </div>
                     
-                    <!-- Hasil Kalkulasi -->
                     <div id="result-container" class="mt-4 pt-4 border-t border-slate-200">
                         <div class="grid grid-cols-2 gap-4 text-center">
                             <div>
@@ -82,31 +90,45 @@
 
             <!-- === Checklist & Peringatan (Tampil kedua di mobile, pindah ke kiri di desktop) === -->
             <div class="w-full lg:w-1/2 space-y-6 mt-6 lg:mt-0 lg:order-1">
-                <!-- Checklist Card -->
                 <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-slate-200">
-                    <h2 class="text-xl font-bold text-slate-900 text-center mb-6">Checklist Sebelum Entri</h2>
-                    <ul class="space-y-4">
-                        <!-- Items Checklist -->
-                        <li class="flex items-start"><input type="checkbox" id="check1" class="h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0"><label for="check1" class="ml-3 text-sm text-slate-700"><strong>Volume di atas $10 Juta?</strong><br>Hindari koin bervolume rendah untuk mencegah susah jual.</label></li>
-                                                <li class="flex items-start">
-  <input type="checkbox" id="check3" class="h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0">
-  <label for="check3" class="ml-3 text-sm text-slate-700">
-    <strong>Entrinya di Wave 2:</strong><br>
-    Setelah cross (dimulai dari bawah terus naik), WAJIB tunggu 1 bukit terbentuk. Entri hanya saat WAVE 2 terbentuk.
-  </label>
-                        <li class="flex items-start"><input type="checkbox" id="check2" class="h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0"><label for="check2" class="ml-3 text-sm text-slate-700"><strong>Candle <em>Fully Outside</em> EMA 25?</strong><br>Pastikan candle setup sepenuhnya di luar EMA 25, tanpa <em>candle</em> yang masuk garis EMA sejak dari bawah.</label></li>
-</li>
-                        <li class="flex items-start"><input type="checkbox" id="check4" class="h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0"><label for="check4" class="ml-3 text-sm text-slate-700"><strong>Open Candle Tidak Menempel EMA 50?</strong><br>Jika menempel, harga berpotensi turun dulu. Sebaiknya <em>skip</em>.</label></li>
-                        <li class="flex items-start"><input type="checkbox" id="check5" class="h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0"><label for="check5" class="ml-3 text-sm text-slate-700"><strong>Skenario Khusus: Entri di <em>Pullback</em>?</strong><br>Jika candle sangat panjang dan baru menembus <em>resistance</em>, pertimbangkan entri saat harga terkoreksi (<em>pullback</em>).</label></li>
+                    <ul class="space-y-4" id="checklist-container">
+                        <!-- ATURAN ENTRI -->
+                        <li class="flex items-start"><input type="checkbox" id="check1" class="checklist-item h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0"><label for="check1" class="ml-3 text-sm text-slate-700 transition-colors"><strong>VOLUME > <span  class="text-rose-700">$10M?</span></strong><br>Hindari koin bervolume rendah, biar tidak susah jual.</label></li>
+                        <li class="flex items-start"><input type="checkbox" id="check2" class="checklist-item h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0"><label for="check2" class="ml-3 text-sm text-slate-700 transition-colors"><strong>CANDLE <span  class="text-rose-700">FULLY OUTSIDE</span> EMA 25?</strong><br>Pastikan candle body-nya tidak ada yang close di dalam EMA 25.</label></li>
+                        <li class="flex items-start"><input type="checkbox" id="check3" class="checklist-item h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0"><label for="check3" class="ml-3 text-sm text-slate-700 transition-colors"><strong>POSISI ENTRI DIAWALI <span  class="text-rose-700">HIGHER HIGH</span></strong><br>Setelah cross, WAJIB minimal ada 1 Higher High.</label></li>
+                        <li class="flex items-start"><input type="checkbox" id="check4" class="checklist-item h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0"><label for="check4" class="ml-3 text-sm text-slate-700 transition-colors"><strong>ENTRI CANDLE <span  class="text-rose-700">TIDAK MENEMPEL EMA 50</span></strong><br>Jika menempel, potensi turun dulu. Sebaiknya <em>skip</em>.</label></li>
+                        <li class="flex items-start"><input type="checkbox" id="check5" class="checklist-item h-5 w-5 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 shrink-0"><label for="check5" class="ml-3 text-sm text-slate-700 transition-colors"><strong>ENTRI DI <span  class="text-rose-700">PULLBACK</span></strong><br>Jika candle sangat panjang & break zone, pertimbangkan entri saat pullback zone.</label></li>
+                        
+                        <!-- ATURAN KELUAR & STRATEGI -->
+                        <li class="pt-4 border-t border-slate-200 flex items-start">
+                            <input type="checkbox" id="check6" class="checklist-item h-5 w-5 mt-0.5 rounded border-rose-400 text-rose-600 focus:ring-rose-500 shrink-0">
+                            <label for="check6" class="ml-3 text-sm text-slate-700 transition-colors">
+                                <strong class="text-rose-700">PAHAM ATURAN CLOSE (EMA 25)</strong><br>
+                                Posisi ditutup jika ada candle bearish yang <strong>close di bawah EMA 25</strong>. Siap-siap close di entri jika memungkinkan.
+                            </label>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" id="check7" class="checklist-item h-5 w-5 mt-0.5 rounded border-rose-400 text-rose-600 focus:ring-rose-500 shrink-0">
+                            <label for="check7" class="ml-3 text-sm text-slate-700 transition-colors">
+                                <strong class="text-rose-700">PAHAM ATURAN STOP LOSS (SL)</strong><br>
+                                Saya akan disiplin keluar jika harga menyentuh level SL yang dihitung, tanpa terkecuali. Tunggu candle close melebihi SL atau count candle selesai.
+                            </label>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" id="check8" class="checklist-item h-5 w-5 mt-0.5 rounded border-green-400 text-green-600 focus:ring-green-500 shrink-0">
+                            <label for="check8" class="ml-3 text-sm text-slate-700 transition-colors">
+                                <strong class="text-green-700">PAHAM STRATEGI TAKE PROFIT (TP)</strong><br>
+                                Jika harga <i>sideways</i> (melambat) di dekat target TP, saya akan amankan profit lebih awal.
+                            </label>
+                        </li>
                     </ul>
                 </div>
-                <!-- Peringatan Card -->
+
                 <div class="bg-rose-50 border-l-4 border-rose-500 p-6 rounded-r-lg shadow-md">
-                    <h2 class="text-xl font-bold text-rose-900 mb-4">Peringatan & Aturan Keluar</h2>
-                    <ul class="space-y-3 text-rose-800 text-sm">
-                        <li><strong>Aturan Keluar:</strong> Posisi hanya ditutup jika ada candle bearish yang bodynya menembus dan ditutup di bawah EMA 25 (close di entri). Selama hal ini belum terjadi, posisi masih aman.</li>
-                        <li><strong>Disiplin Stop Loss (SL):</strong> Jika harga menyentuh level SL yang telah ditentukan, segera keluar. Jangan menunggu dengan harapan harga akan kembali naik.</li>
-                    </ul>
+                    <h2 class="text-xl font-bold text-rose-900 mb-2">Pengingat Terakhir</h2>
+                    <p class="text-rose-800 text-sm">
+                        Disiplin adalah kunci profitabilitas. Patuhi semua aturan yang telah Anda centang di atas. Kita cari <strong>PROFIT BUKAN BUANG DUIT</strong>.
+                    </p>
                 </div>
             </div>
         </div>
@@ -120,8 +142,34 @@
         const riskValueText = document.getElementById('risk-value');
         const rewardValueText = document.getElementById('reward-value');
         const errorMessageText = document.getElementById('error-message');
+        const checklistItems = document.querySelectorAll('.checklist-item');
+        const calculatorOverlay = document.getElementById('calculator-overlay');
 
-        // Mencegah perubahan angka saat scroll di input number
+        const checkChecklistStatus = () => {
+            const allChecked = Array.from(checklistItems).every(item => item.checked);
+
+            if (allChecked) {
+                calculatorOverlay.style.display = 'none';
+                entryPriceInput.disabled = false;
+                slPriceInput.disabled = false;
+                entryPriceInput.placeholder = "Masukkan harga masuk...";
+                slPriceInput.placeholder = "Masukkan harga stop loss...";
+            } else {
+                calculatorOverlay.style.display = 'flex';
+                entryPriceInput.disabled = true;
+                slPriceInput.disabled = true;
+                entryPriceInput.value = '';
+                slPriceInput.value = '';
+                entryPriceInput.placeholder = "Terkunci...";
+                slPriceInput.placeholder = "Terkunci...";
+                resetDisplay();
+            }
+        };
+
+        checklistItems.forEach(item => {
+            item.addEventListener('change', checkChecklistStatus);
+        });
+
         [entryPriceInput, slPriceInput].forEach(input => {
             input.addEventListener('wheel', (event) => {
                 event.preventDefault();
@@ -129,7 +177,6 @@
             });
         });
 
-        // Fungsi untuk mereset tampilan hasil
         const resetDisplay = (message = '') => {
             targetTpText.innerText = '-';
             riskValueText.innerText = '-';
@@ -138,7 +185,6 @@
             copyButton.disabled = true;
         };
 
-        // Fungsi utama untuk kalkulasi real-time
         const calculateTP = () => {
             const entryPriceStr = entryPriceInput.value;
             const slPriceStr = slPriceInput.value;
@@ -151,7 +197,7 @@
             const entryPrice = parseFloat(entryPriceStr);
             const slPrice = parseFloat(slPriceStr);
 
-            if (isNaN(entryPrice) || isNaN(slPrice) || entryPrice === 0) { // Tambah cek entryPrice tidak nol
+            if (isNaN(entryPrice) || isNaN(slPrice) || entryPrice <= 0) {
                 resetDisplay();
                 return;
             }
@@ -168,28 +214,23 @@
             const slDecimalPlaces = (slPriceStr.split('.')[1] || '').length;
             const decimalPlaces = Math.max(entryDecimalPlaces, slDecimalPlaces);
 
-            // Kalkulasi nilai absolut
             const riskAbsolute = entryPrice - slPrice;
             const rewardAbsolute = riskAbsolute * 1.5;
             const tpTarget = entryPrice + rewardAbsolute;
 
-            // ========================================================================
-            // === PERUBAHAN: Menghitung dan menampilkan Risk/Reward dalam persentase ===
-            // ========================================================================
             const riskPercentage = (riskAbsolute / entryPrice) * 100;
             const rewardPercentage = (rewardAbsolute / entryPrice) * 100;
 
-            // Update UI dengan hasil persentase dan absolut
-            riskValueText.innerText = `-${riskPercentage.toFixed(2)}%`; // Tampilkan sebagai persentase
-            rewardValueText.innerText = `+${rewardPercentage.toFixed(2)}%`; // Tampilkan sebagai persentase
-            targetTpText.innerText = tpTarget.toFixed(decimalPlaces); // Tetap nilai absolut
+            riskValueText.innerText = `-${riskPercentage.toFixed(2)}%`;
+            rewardValueText.innerText = `+${rewardPercentage.toFixed(2)}%`;
+            targetTpText.innerText = tpTarget.toFixed(decimalPlaces);
         };
         
-        // Pasang event listener 'input' untuk kalkulasi otomatis
         entryPriceInput.addEventListener('input', calculateTP);
         slPriceInput.addEventListener('input', calculateTP);
+        
+        document.addEventListener('DOMContentLoaded', checkChecklistStatus);
 
-        // Fungsi untuk menyalin hasil
         function copyResult() {
             const entryPrice = entryPriceInput.value;
             const slPrice = slPriceInput.value;
